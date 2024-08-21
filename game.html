@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #04a99e, #026f8c);
+            color: #ffffff;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: #f8f874;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            width: 80vmin;
+            height: 80vmin;
+            max-width: 500px;
+            max-height: 500px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 1rem;
+        }
+
+        .box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4rem;
+            background-color: #f8f874;
+            border: none;
+            border-radius: 1rem;
+            color: #026f8c;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .box:active {
+            transform: scale(0.95);
+        }
+
+        .box:disabled {
+            cursor: not-allowed;
+            background-color: #f8f8f8;
+            color: #b5b5b5;
+        }
+
+        .msg-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 1rem;
+        }
+
+        .msg-container.show {
+            display: flex;
+        }
+
+        #msg {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: #f8f874;
+        }
+
+        button {
+            font-size: 1.5rem;
+            padding: 1rem 2rem;
+            margin-top: 1rem;
+            border: none;
+            border-radius: 1rem;
+            background-color: #026f8c;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .reset, .new {
+            margin-top: 3rem;
+            background-color: #04a99e;
+            color: #ffffff;
+        }
+
+        button:hover {
+            background-color: #f8f874;
+            color: #026f8c;
+        }
+    </style>
+</head>
+<body>
+    <div class="msg-container">
+        <p id="msg">Winner</p>
+        <button class="new"><b>New Game</b></button>
+    </div>
+    <main>
+        <h1>Tic Tac Toe</h1>
+        <div class="container">
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
+        </div>
+        <button class="reset"><b>Reset</b></button>
+    </main>
+    <script>
+        let btns = document.querySelectorAll(".box");
+        let curr = "X";
+        let reset = document.querySelector(".reset");
+        let newGameBtn = document.querySelector(".new");
+        let msgContainer = document.querySelector(".msg-container");
+        let msg = document.querySelector("#msg");
+
+        const winPatterns = [[0, 1, 2], [0, 3, 6], [0, 4, 8], [1, 4, 7], [2, 5, 8], [2, 4, 6], [3, 4, 5], [6, 7, 8]];
+
+        btns.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                btn.innerText = curr;
+                btn.disabled = true;
+                curr = curr === "X" ? "O" : "X";
+
+                if (checkWinner()) {
+                    btns.forEach((btn) => btn.disabled = true);
+                    showWinner(curr === "X" ? "O" : "X");
+                } else if (checkDraw()) {
+                    showDraw();
+                }
+            });
+        });
+
+        const checkWinner = () => {
+            return winPatterns.some(pattern => {
+                const [a, b, c] = pattern;
+                return btns[a].innerText && btns[a].innerText === btns[b].innerText && btns[a].innerText === btns[c].innerText;
+            });
+        };
+
+        const checkDraw = () => {
+            return [...btns].every(btn => btn.innerText !== "");
+        };
+
+        const showWinner = (winner) => {
+            msg.innerText = `Congratulations, ${winner} wins!`;
+            msgContainer.classList.add("show");
+        };
+
+        const showDraw = () => {
+            msg.innerText = "It's a draw!";
+            msgContainer.classList.add("show");
+        };
+
+        newGameBtn.addEventListener("click", resetGame);
+        reset.addEventListener("click", resetGame);
+
+        function resetGame() {
+            btns.forEach(btn => {
+                btn.innerText = "";
+                btn.disabled = false;
+            });
+            msgContainer.classList.remove("show");
+            curr = "X";
+        }
+    </script>   
+</body>
+</html>
